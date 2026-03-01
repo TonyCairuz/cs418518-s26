@@ -17,23 +17,23 @@ export function sendEmail(email, mailSubject, body) {
         secure: false,             // Use TLS, not SSL
         requireTLS: true,          // Force TLS
         auth: {
-            user: process.env.SMTP_EMAIl,     // Your Gmail address (from .env)
-            pass: process.env.SMTP_PASSWORD,  // Your Gmail app password (from .env)
+            user: process.env.SMTP_EMAIL,     // Your Gmail address (from .env)
+            pass: process.env.SMTP_PASSWORD,  // Your Gmail app password (from .env)
         },
     });
     // Define email options
     const mailOptions = {
-        from: process.env.SMTP_EMAIl, // Sender address (must match authenticated user)
-        to: email,                    // Recipient email
-        subject: mailSubject,         // Email subject line
-        html: body,                   // Email body as HTML
+        from: process.env.SMTP_EMAIL, // Sender address (must match authenticated user)
+        to: email,                    // Recipient email
+        subject: mailSubject,         // Email subject line
+        html: body,                   // Email body as HTML
     };
     // Send the email
     transport.sendMail(mailOptions, function (err, result) {
         if (err) {
-            console.log("Error in sending email"); // Log failure
+            console.log("Error in sending email:", err.message); // Log failure
         } else {
-            console.log("Email has been sent");    // Log success
+            console.log("Email has been sent to " + email);    // Log success
         }
     });
 }

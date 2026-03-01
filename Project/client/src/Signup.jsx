@@ -1,6 +1,4 @@
-import { useState } from "react";
-import Field from "./Field";
-import "./Signup.css";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup({ onRegister }) {
   const [form, setForm] = useState({
@@ -30,81 +28,131 @@ export default function Signup({ onRegister }) {
     return e;
   }
 
-  function handleSubmit(e) {
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
     e.preventDefault();
     const v = validate();
     setErrors(v);
 
     if (Object.keys(v).length === 0) {
-      onRegister({
-        firstName: form.firstName,
-        lastName: form.lastName,
-        uin: form.uin,
-        email: form.email.toLowerCase(),
-      });
+      try {
+        const res = await fetch(import.meta.env.VITE_API_KEY + "user/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            u_first_name: form.firstName,
+            u_last_name: form.lastName,
+            u_uin: form.uin,
+            u_email: form.email.toLowerCase(),
+            u_password: form.password,
+          }),
+        });
 
-      
+        const json = await res.json();
+        if (!res.ok) {
+          setErrors({ form: json.message });
+          return;
+        }
+
+        localStorage.setItem("pendingVerifyEmail", form.email.toLowerCase());
+        navigate("/verify-email");
+
+      } catch (err) {
+        setErrors({ form: "Registration failed. Please try again." });
+      }
     }
   }
 
   return (
-    <form className="signup-form" onSubmit={handleSubmit}>
-      <h3 className="signup-title">Create Account</h3>
+    <div className="card-container" style={{ maxWidth: '600px' }}>
+      <h2 className="text-center mb-4">Create Account</h2>
+      {errors.form && <p className="error-text text-center">{errors.form}</p>}
 
-      <Field label="First Name" error={errors.firstName}>
-        <input
-          className={`signup-input ${errors.firstName ? "error" : ""}`}
-          value={form.firstName}
-          onChange={(e) => updateField("firstName", e.target.value)}
-        />
-      </Field>
+      <form onSubmit={handleSubmit}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }} className="mb-4">
+          <div>
+            <label>First Name</label>
+            <input
+              className={errors.firstName ? "invalid" : ""}
+              value={form.firstName}
+              onChange={(e) => updateField("firstName", e.target.value)}
+              placeholder="John"
+            />
+            {errors.firstName && <span className="error-text" style={{ fontSize: '12px' }}>{errors.firstName}</span>}
+          </div>
+          <div>
+            <label>Last Name</label>
+            <input
+              className={errors.lastName ? "invalid" : ""}
+              value={form.lastName}
+              onChange={(e) => updateField("lastName", e.target.value)}
+              placeholder="Doe"
+            />
+            {errors.lastName && <span className="error-text" style={{ fontSize: '12px' }}>{errors.lastName}</span>}
+          </div>
+        </div>
 
-      <Field label="Last Name" error={errors.lastName}>
-        <input
-          className={`signup-input ${errors.lastName ? "error" : ""}`}
-          value={form.lastName}
-          onChange={(e) => updateField("lastName", e.target.value)}
-        />
-      </Field>
+        <div className="mb-4">
+          <label>UIN (9 Digits)</label>
+          <input
+            className={errors.uin ? "invalid" : ""}
+            value={form.uin}
+            onChange={(e) => updateField("uin", e.target.value)}
+            placeholder="123456789"
+          />
+          {errors.uin && <span className="error-text" style={{ fontSize: '12px' }}>{errors.uin}</span>}
+        </div>
 
-      <Field label="UIN" error={errors.uin}>
-        <input
-          className={`signup-input ${errors.uin ? "error" : ""}`}
-          value={form.uin}
-          onChange={(e) => updateField("uin", e.target.value)}
-        />
-      </Field>
+        <div className="mb-4">
+          <label>Email Address</label>
+          <input
+            type="email"
+            className={errors.email ? "invalid" : ""}
+            value={form.email}
+            onChange={(e) => updateField("email", e.target.value)}
+            placeholder="john@example.com"
+          />
+          {errors.email && <span className="error-text" style={{ fontSize: '12px' }}>{errors.email}</span>}
+        </div>
 
-      <Field label="Email" error={errors.email}>
-        <input
-          className={`signup-input ${errors.email ? "error" : ""}`}
-          value={form.email}
-          onChange={(e) => updateField("email", e.target.value)}
-        />
-      </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }} className="mb-4">
+          <div>
+            <label>Password</label>
+            <input
+              type="password"
+              className={errors.password ? "invalid" : ""}
+              value={form.password}
+              onChange={(e) => updateField("password", e.target.value)}
+              placeholder="••••••••"
+            />
+            {errors.password && <span className="error-text" style={{ fontSize: '12px' }}>{errors.password}</span>}
+          </div>
+          <div>
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              className={errors.confirmPassword ? "invalid" : ""}
+              value={form.confirmPassword}
+              onChange={(e) => updateField("confirmPassword", e.target.value)}
+              placeholder="••••••••"
+            />
+            {errors.confirmPassword && <span className="error-text" style={{ fontSize: '12px' }}>{errors.confirmPassword}</span>}
+          </div>
+        </div>
 
-      <Field label="Password" error={errors.password}>
-        <input
-          type="password"
-          className={`signup-input ${errors.password ? "error" : ""}`}
-          value={form.password}
-          onChange={(e) => updateField("password", e.target.value)}
-        />
-      </Field>
+        <button className="button" type="submit" style={{ width: '100%', marginTop: '1rem' }}>
+          Create Account
+        </button>
 
-      <Field label="Confirm Password" error={errors.confirmPassword}>
-        <input
-          type="password"
-          className={`signup-input ${errors.confirmPassword ? "error" : ""}`}
-          value={form.confirmPassword}
-          onChange={(e) => updateField("confirmPassword", e.target.value)}
-        />
-      </Field>
-
-      <button className="signup-btn" type="submit">
-        Sign Up
-      </button>
-    </form>
+        <div className="text-center mt-4">
+          <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Already have an account? </span>
+          <Link to="/login" style={{ fontSize: '0.9rem', fontWeight: '600' }}>
+            Sign In
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }
 

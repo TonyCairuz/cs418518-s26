@@ -61,6 +61,7 @@ export default function VerifyOtp() {
 
             // ✅ Now user is authenticated → store and redirect
             localStorage.setItem("loggedInUser", JSON.stringify(user));
+            localStorage.setItem("token", json.token);
             localStorage.removeItem("pendingOtpEmail");
 
             navigate("/dashboard");
@@ -74,51 +75,37 @@ export default function VerifyOtp() {
     const otpNotValid = submitted && !/^\d{6}$/.test(otp.trim());
 
     return (
-        <div id="login">
-            {error && (
-                <div
-                    style={{
-                        background: "#fee",
-                        padding: 10,
-                        borderRadius: 6,
-                        marginBottom: 12,
-                        border: "1px solid #fca5a5",
-                        color: "#991b1b",
-                    }}
-                >
-                    {error}
-                </div>
-            )}
+        <div className="card-container">
+            <h2 className="text-center mb-4">OTP Verification</h2>
+            <p className="text-center mb-4" style={{ color: 'var(--text-muted)' }}>
+                Enter the 6-digit code sent to <b>{email}</b>
+            </p>
+
+            {error && <div className="error-text text-center">{error}</div>}
 
             <form onSubmit={handleVerifyOtp}>
-                <div className="controls">
-                    <p>
-                        <label>Email</label>
-                        <input type="email" value={email} disabled />
-                    </p>
-
-                    <p>
-                        <label className={otpNotValid ? "invalid" : ""}>OTP</label>
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            value={otp}
-                            className={otpNotValid ? "invalid" : ""}
-                            onChange={(e) => setOtp(e.target.value)}
-                            placeholder="Enter 6-digit OTP"
-                        />
-                    </p>
+                <div className="mb-4">
+                    <label className={otpNotValid ? "error-text" : ""}>One-Time Password</label>
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        value={otp}
+                        className={otpNotValid ? "invalid" : ""}
+                        onChange={(e) => setOtp(e.target.value)}
+                        placeholder="000000"
+                        style={{ textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
+                    />
                 </div>
 
-                <div className="actions">
-                    <Link to="/login" className="button" style={{ textAlign: "center" }}>
-                        Back to Login
-                    </Link>
-
-                    <button className="button" type="submit" disabled={loading}>
+                <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <button className="button" type="submit" style={{ width: '100%' }} disabled={loading}>
                         {loading ? "Verifying..." : "Verify OTP"}
                     </button>
+
+                    <div className="text-center">
+                        <Link to="/login" style={{ fontSize: '0.9rem' }}>Back to Login</Link>
+                    </div>
                 </div>
             </form>
         </div>

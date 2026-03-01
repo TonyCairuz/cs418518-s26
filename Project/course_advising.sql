@@ -31,6 +31,7 @@ CREATE TABLE `email_otp` (
   `id` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `otp` varchar(10) NOT NULL,
+  `type` enum('verification', '2fa', 'reset') NOT NULL,
   `expires_at` datetime NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

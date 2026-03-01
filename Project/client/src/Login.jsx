@@ -72,57 +72,50 @@ export default function Login() {
   const passwordNotValid = submitted && enteredPassword.trim().length < 8;
 
   return (
-    <div id="login">
-      {error && (
-        <div
-          style={{
-            background: "#fee",
-            padding: 10,
-            borderRadius: 6,
-            marginBottom: 12,
-            border: "1px solid #fca5a5",
-            color: "#991b1b",
-          }}
-        >
-          {error}
-        </div>
-      )}
+    <div className="card-container">
+      <h2 className="text-center mb-4">Sign In</h2>
+      {error && <div className="error-text text-center">{error}</div>}
 
       <form onSubmit={handleLogin}>
-        <div className="controls">
-          <p>
-            <label className={emailNotValid ? "invalid" : ""}>Email</label>
-            <input
-              type="email"
-              value={enteredEmail}
-              className={emailNotValid ? "invalid" : ""}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-            />
-          </p>
-
-          <p>
-            <label className={passwordNotValid ? "invalid" : ""}>Password</label>
-            <input
-              type="password"
-              value={enteredPassword}
-              className={passwordNotValid ? "invalid" : ""}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-            />
-          </p>
+        <div className="mb-4">
+          <label className={emailNotValid ? "error-text" : ""}>Email</label>
+          <input
+            type="email"
+            value={enteredEmail}
+            className={emailNotValid ? "invalid" : ""}
+            onChange={(e) => handleInputChange("email", e.target.value)}
+            placeholder="name@example.com"
+          />
         </div>
 
-        <div className="actions">
-          {/* Better UX: link to signup route */}
-          {/* Used for navigation triggered by user clicking UI
-              Cleaner than using <a href>
-              Does NOT reload the page */}
-          <Link to="/signup" className="button" style={{ textAlign: "center" }}>
-            Create a new account
-          </Link>
+        <div className="mb-4">
+          <label className={passwordNotValid ? "error-text" : ""}>Password</label>
+          <input
+            type="password"
+            value={enteredPassword}
+            className={passwordNotValid ? "invalid" : ""}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+            placeholder="••••••••"
+          />
+        </div>
 
-          <button className="button" type="submit" disabled={loading}>
+        <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <button className="button" type="submit" style={{ width: '100%' }} disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </button>
+
+          <div className="text-center">
+            <Link to="/forgot-password" style={{ fontSize: '0.9rem' }}>Forgot Password?</Link>
+          </div>
+
+          <hr style={{ border: '0', borderTop: '1px solid var(--border-color)', width: '100%', margin: '0.5rem 0' }} />
+
+          <div className="text-center">
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Don't have an account? </span>
+            <Link to="/signup" style={{ fontSize: '0.9rem', fontWeight: '600' }}>
+              Create Account
+            </Link>
+          </div>
         </div>
       </form>
     </div>

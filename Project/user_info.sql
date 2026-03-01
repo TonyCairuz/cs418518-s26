@@ -32,9 +32,12 @@ CREATE TABLE `user_info` (
   `u_first_name` varchar(50) NOT NULL,
   `u_last_name` varchar(50) NOT NULL,
   `u_email` varchar(50) NOT NULL,
+  `u_uin` varchar(9) NOT NULL,
   `u_password` varchar(150) NOT NULL,
-  `u_is_verified` int(11) NOT NULL,
-  `u_is_admin` int(11) NOT NULL
+  `u_is_verified` tinyint(1) NOT NULL DEFAULT 0,
+  `u_is_admin` tinyint(1) NOT NULL DEFAULT 0,
+  UNIQUE KEY (`u_email`),
+  UNIQUE KEY (`u_uin`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
