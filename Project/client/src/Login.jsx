@@ -52,14 +52,16 @@ export default function Login() {
         return;
       }
 
-      // Step 2: Store email temporarily
-      localStorage.setItem("pendingOtpEmail", enteredEmail);
-
-      //  Step 3: Redirect to OTP page
-      // Used after API success
-      // Used inside event handlers
-      // Used conditionally
-      navigate("/verify-otp");
+      // Step 2: Check if token is returned (2FA disabled)
+      if (json.token) {
+        localStorage.setItem("loggedInUser", JSON.stringify(json.data));
+        localStorage.setItem("token", json.token);
+        navigate("/dashboard");
+      } else {
+        // Step 3: Store email temporarily and redirect to OTP page (2FA enabled)
+        localStorage.setItem("pendingOtpEmail", enteredEmail);
+        navigate("/verify-otp");
+      }
 
     } catch (err) {
       setError(err?.message || "Something went wrong");

@@ -86,6 +86,17 @@ user.post("/login", async (req, res) => {
             return res.status(403).json({ status: 403, message: "Please verify your email first" });
         }
 
+        // Check if 2FA is enabled
+        if (!userRecord.u_2fa_enabled) {
+            const { u_password: _, ...safeUser } = userRecord;
+            const token = jwt.sign(
+                { id: userRecord.u_id, email: userRecord.u_email, isAdmin: !!userRecord.u_is_admin },
+                process.env.JWT_SECRET || 'secret',
+                { expiresIn: '1h' }
+            );
+            return res.status(200).json({ status: 200, message: "Login successful", data: safeUser, token });
+        }
+
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
@@ -156,6 +167,16 @@ user.put("/profile", authenticateToken, async (req, res) => {
         const { u_first_name, u_last_name } = req.body;
         await connection.execute("UPDATE user_info SET u_first_name = ?, u_last_name = ? WHERE u_id = ?", [u_first_name, u_last_name, req.user.id]);
         res.status(200).json({ status: 200, message: "Updated" });
+    } catch (err) {
+        res.status(500).json({ status: 500, message: err.message });
+    }
+});
+
+user.post("/toggle-2fa", authenticateToken, async (req, res) => {
+    try {
+        const { enabled } = req.body;
+        await connection.execute("UPDATE user_info SET u_2fa_enabled = ? WHERE u_id = ?", [enabled ? 1 : 0, req.user.id]);
+        res.status(200).json({ status: 200, message: `2FA ${enabled ? 'enabled' : 'disabled'}` });
     } catch (err) {
         res.status(500).json({ status: 500, message: err.message });
     }

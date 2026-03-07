@@ -36,6 +36,7 @@ CREATE TABLE `user_info` (
   `u_password` varchar(150) NOT NULL,
   `u_is_verified` tinyint(1) NOT NULL DEFAULT 0,
   `u_is_admin` tinyint(1) NOT NULL DEFAULT 0,
+  `u_2fa_enabled` tinyint(1) NOT NULL DEFAULT 0,
   UNIQUE KEY (`u_email`),
   UNIQUE KEY (`u_uin`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

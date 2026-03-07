@@ -174,7 +174,7 @@ export default function Dashboard() {
 
         <section className="card-container" style={{ margin: 0, maxWidth: '100%' }}>
           <h3 className="mb-4">Security</h3>
-          <form onSubmit={handleChangePassword}>
+          <form onSubmit={handleChangePassword} style={{ marginBottom: '2rem' }}>
             <div className="mb-4">
               <label>Current Password</label>
               <input type="password" value={passData.current_password} onChange={(e) => setPassData({ ...passData, current_password: e.target.value })} placeholder="••••••••" required />
@@ -185,6 +185,55 @@ export default function Dashboard() {
             </div>
             <button type="submit" className="button" style={{ width: '100%' }}>Change Password</button>
           </form>
+
+          <hr style={{ border: '0', borderTop: '1px solid var(--border-color)', margin: '2rem 0' }} />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h4 style={{ margin: 0 }}>Two-Factor Authentication</h4>
+              <p style={{ margin: '5px 0 0', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                Require an email OTP whenever you sign in.
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '0.9rem', fontWeight: '600', color: user?.u_2fa_enabled ? 'var(--primary)' : 'var(--text-muted)' }}>
+                {user?.u_2fa_enabled ? "Enabled" : "Disabled"}
+              </span>
+              <button
+                className="button"
+                style={{
+                  width: 'auto',
+                  padding: '6px 15px',
+                  fontSize: '13px',
+                  background: user?.u_2fa_enabled ? 'var(--error)' : 'var(--primary)',
+                  borderColor: user?.u_2fa_enabled ? 'var(--error)' : 'var(--primary)',
+                  color: 'white'
+                }}
+                onClick={async () => {
+                  try {
+                    const res = await fetch(import.meta.env.VITE_API_KEY + "user/toggle-2fa", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                      },
+                      body: JSON.stringify({ enabled: !user?.u_2fa_enabled })
+                    });
+                    if (res.ok) {
+                      setMessage(`2FA ${!user?.u_2fa_enabled ? 'enabled' : 'disabled'} successfully!`);
+                      fetchProfile();
+                    } else {
+                      setError("Failed to update 2FA setting.");
+                    }
+                  } catch (err) {
+                    setError("Error updating 2FA setting.");
+                  }
+                }}
+              >
+                {user?.u_2fa_enabled ? "Disable" : "Enable"}
+              </button>
+            </div>
+          </div>
         </section>
       </div>
 
