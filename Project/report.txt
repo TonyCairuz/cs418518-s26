@@ -1,0 +1,101 @@
+Project: Course Advising System
+Student name: Tony Cairuz
+Student UIN: 
+
+All sections are mandatory. Please do not change the format of this template.
+
+1. Overview (10 points)
+What is your website about? What are the methods do you plan to use, React, or JavaScript, or Node or a combination of them? Do you want to build it on top of a framework (e.g., Express) or not? Use the following table to show which features you have implemented, and which are not. I do not expect you to finish all of them at this stage, but I do expect you have worked out several. Including a screenshot of any working page.
+
+My website is a Course Advising System meant to help students and admins manage academic records. I built it using a React frontend with Vite for a fast development experience. On the backend, I used Node.js with the Express framework to handle API requests and business logic. The data is stored in a MySQL database. I also integrated Nodemailer to send security codes and verification emails to users.
+
+Features Status:
+- Home Page: Implemented
+- User Registration: Implemented
+- Email Verification (OTP): Implemented
+- Dual-Step Login (Password + OTP): Implemented
+- Secure Password Hashing: Implemented
+- User Dashboard: Implemented
+- Profile Management: Implemented
+- Password Change/Reset: Implemented
+- Optional 2FA Toggle: Implemented
+- Admin Access Levels: Implemented
+- Responsive Green/Black Theme: Implemented
+
+[IMAGE_PLACEHOLDER: Please insert a screenshot of the login or dashboard page here]
+
+2. Milestone Accomplishments (10 points)
+List ALL specifications of this milestone and specify whether certain specifications are fulfilled or not.
+Table 1: Status of milestone specifications.
+
+Fulfilled Feature# Specification
+Yes       1        Set up MySQL database schema and tables
+Yes       2        Implement secure user registration with UIN and email
+Yes       3        Implement email verification flow using OTP codes
+Yes       4        Build a secure login system with JWT authentication
+Yes       5        Implement Two-Factor Authentication (OTP) for login
+Yes       6        Use bcrypt for secure password hashing
+Yes       7        Create a user dashboard for profile management
+Yes       8        Implement password change and "forgot password" flow
+Yes       9        Develop a responsive frontend with a consistent theme
+Yes       10       Implement backend API routes for all user operations
+
+3. Architecture (20 points)
+Describe the overall architecture of this project, including but not limited to the programming language, framework used, the major components and how they are connected. Draw a diagram similar to the one below.
+
+The project follows a full-stack client-server architecture. The frontend is built with React and communicates with the backend via a REST API. The backend is a Node.js server using Express, which acts as the bridge between the user interface and the MySQL database. Authentication is handled using JSON Web Tokens (JWT) to keep user sessions secure. 
+
+Architecture Diagram:
+[Frontend: React/Vite] <--- HTTP/REST ---> [Backend: Node.js/Express] <--- SQL ---> [Database: MySQL]
+                                                  |
+                                                  V
+                                           [Email Service: Nodemailer]
+
+Major Components:
+- Client (src/): Contains React components like Home.jsx, Login.jsx, Signup.jsx, and Dashboard.jsx.
+- Server (route/): Contains Express routes for user authentication and profile management.
+- Database (database/): Handles the connection to the MySQL server.
+
+4. Database Design (20 points)
+Describe your database design including a table showing fields, data types, key types, and a few examples of rows.
+
+The database design focuses on user security and verification. I have two main tables: `user_info` for permanent user data and `email_otp` for temporary authentication codes.
+
+Table: `user_info`
+Field           Type            Key             Example
+u_id            INT             Primary         1
+u_first_name    VARCHAR(50)                     Tony
+u_last_name     VARCHAR(50)                     Cairuz
+u_email         VARCHAR(50)     Unique          tcair002@odu.edu
+u_uin           VARCHAR(9)      Unique          123456789
+u_password      VARCHAR(150)                    $2b$10$abc...
+u_is_verified   TINYINT                         1
+u_is_admin      TINYINT                         0
+u_2fa_enabled   TINYINT                         1
+
+Table: `email_otp`
+Field           Type            Key             Example
+id              INT             Primary         10
+email           VARCHAR(255)    Unique          tcair002@odu.edu
+otp             VARCHAR(10)                     123456
+type            ENUM                            '2fa'
+expires_at      DATETIME                        2026-03-07 19:30:00
+
+5. Implementation (40 points)
+Describe how each specification is implemented. Specify and highlight the program file in which each specification is implemented.
+
+Home Page and User Dashboard:
+The website features a clean landing page with a hero section displaying the project title "CS418 Project". The user dashboard serves as a central hub for students to manage their profiles, displaying user information and allowing for security settings like 2FA to be toggled. The Home page is implemented in `Home.jsx` and the dashboard logic is in `Dashboard.jsx`.
+Files: Project/client/src/Home.jsx, Project/client/src/Dashboard.jsx
+
+Secure Login and 2FA:
+The login flow is a two-step process. First, the user enters their email and password. If correct and 2FA is enabled, the server generates a 6-digit OTP and sends it via email. The user must then enter this code correctly to receive a JWT token for authentication. This logic is spread across the login route and the OTP verification route.
+Files: Project/server/route/user.js, Project/client/src/Login.jsx, Project/client/src/VerifyOtp.jsx
+
+Email Verification:
+When a new user signs up, the system automatically sends a verification email using Nodemailer. The user cannot log in until they verify their email with the code provided. The registration and verification logic handles the creation of the user and the temporary OTP entry.
+Files: Project/server/route/user.js, Project/client/src/Signup.jsx, Project/client/src/VerifyEmail.jsx
+
+Password Management:
+Users can change their passwords from the dashboard or initiate a reset if they forget them. The backend uses bcrypt to hash new passwords before storing them in the database, ensuring that plain-text passwords are never saved.
+Files: Project/server/route/user.js, Project/client/src/ForgotPassword.jsx, Project/client/src/Dashboard.jsx
