@@ -7,6 +7,7 @@ import Signup from "./Signup.jsx";
 import VerifyEmail from "./VerifyEmail.jsx";
 import ForgotPassword from "./ForgotPassword.jsx";
 import VerifyOtp from "./VerifyOtp.jsx";
+import Home from "./Home.jsx";
 
 function App() {
 
@@ -16,7 +17,7 @@ function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<Dashboard />} />
