@@ -28,7 +28,7 @@ This website is a **Course Advising System** designed to help university student
 | Status Freezing | Yes | Approved/Rejected records are read-only |
 
 ### Working Page Screenshot:
-![Advising History Screenshot](file:///home/meeksonjr/.gemini/antigravity/brain/db214639-308a-43d2-ae2e-608e8615618c/media__1774941023173.png)
+![Advising History Screenshot](./image.png)
 
 ---
 
