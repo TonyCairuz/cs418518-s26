@@ -4,7 +4,7 @@ import express from 'express';
 import users from './route/user.js';
 import advising from './route/advising.js';
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 
 const myLogger = function (req, res, next) {
