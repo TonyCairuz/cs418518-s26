@@ -19,20 +19,21 @@ Render will host your Node.js/Express API.
 1.  **Create a Web Service**: In the Render Dashboard, click **New > Web Service**.
 2.  **Connect Repo**: Connect your new GitHub repository.
 3.  **Configure Build/Run**:
-    *   **Name**: `course-advising-api` (or similar)
+    *   **Name**: `course-advising-api`
     *   **Root Directory**: `server`
     *   **Build Command**: `npm install`
-    *   **Start Command**: `npm start` (I have already added this to your `package.json`).
+    *   **Start Command**: `npm start`
 4.  **Add Environment Variables**: Go to the **Environment** tab and add:
-    *   `DB_HOST`: Your cloud database host (e.g., Aiven, PlanetScale, or Render Managed Redis/MySQL).
-    *   `DB_USER`: Your db username.
-    *   `DB_PASSWORD`: Your db password.
+    *   `DB_HOST`: `gateway01.us-east-1.prod.aws.tidbcloud.com` (Example for TiDB)
+    *   `DB_PORT`: `4000` (Required for TiDB)
+    *   `DB_USER`: Your TiDB username.
+    *   `DB_PASSWORD`: Your TiDB password.
     *   `DB_NAME`: `COURSE_ADVISING`
     *   `JWT_SECRET`: A secure random string.
     *   `FE_ORIGIN`: Your Firebase URL (e.g., `https://your-project.web.app`).
 
 > [!IMPORTANT]
-> **Database for Production**: Your current database is running on `127.0.0.1` (localhost). For a live website, you MUST use a cloud database and update the `DB_HOST` variable in Render.
+> **Database for Production**: Since your project uses MySQL, you must use a cloud host like **TiDB Cloud** or **Aiven**. Ensure `ssl: { rejectUnauthorized: false }` is present in your `connection.js`.
 
 ---
 
