@@ -51,3 +51,20 @@
 .header-nav a.active-link::after {
   width: 100%;
 }
+
+.logout-button {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+}
+
+.logout-button:hover {
+  background: var(--primary);
+  color: white;
+}

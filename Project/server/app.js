@@ -2,6 +2,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
 import users from './route/user.js';
+import advising from './route/advising.js';
 const app = express();
 const port = 3000;
 
@@ -33,6 +34,7 @@ app.use(express.json());
 
 app.use(myLogger);
 app.use('/user', users);
+app.use('/advising', advising);
 
 
 app.get('/', (req, res) => {

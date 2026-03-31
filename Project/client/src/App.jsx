@@ -8,6 +8,8 @@ import VerifyEmail from "./VerifyEmail.jsx";
 import ForgotPassword from "./ForgotPassword.jsx";
 import VerifyOtp from "./VerifyOtp.jsx";
 import Home from "./Home.jsx";
+import AdvisingHistory from "./AdvisingHistory.jsx";
+import AdvisingForm from "./AdvisingForm.jsx";
 
 function App() {
 
@@ -24,6 +26,9 @@ function App() {
             <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/advising-history" element={<AdvisingHistory />} />
+            <Route path="/advising-form" element={<AdvisingForm />} />
+            <Route path="/advising-form/:id" element={<AdvisingForm />} />
           </Routes>
         </main>
       </Router>
