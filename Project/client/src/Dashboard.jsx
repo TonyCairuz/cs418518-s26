@@ -254,8 +254,8 @@ export default function Dashboard() {
             Welcome to the management interface. As an administrator, you have access to student records and advising workflows.
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button className="button" style={{ width: 'auto', padding: '10px 20px' }}>Manage Users</button>
-            <button className="button" style={{ width: 'auto', padding: '10px 20px', background: 'rgba(51, 65, 85, 0.5)', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}>View Reports</button>
+            <button className="button" onClick={() => navigate("/admin")} style={{ width: 'auto', padding: '10px 20px' }}>Manage Users</button>
+            <button className="button" onClick={() => navigate("/admin")} style={{ width: 'auto', padding: '10px 20px', background: 'rgba(51, 65, 85, 0.5)', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}>View Reports</button>
           </div>
         </section>
       )}
