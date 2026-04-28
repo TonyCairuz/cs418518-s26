@@ -73,6 +73,7 @@ export default function AdvisingHistory() {
                 <th style={{ padding: '12px', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}>Date</th>
                 <th style={{ padding: '12px', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}>Term</th>
                 <th style={{ padding: '12px', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}>Status</th>
+                <th style={{ padding: '12px', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}>Admin Feedback</th>
               </tr>
             </thead>
             <tbody>
@@ -98,6 +99,9 @@ export default function AdvisingHistory() {
                     }}>
                       {record.status}
                     </span>
+                  </td>
+                  <td style={{ padding: '12px', border: '1px solid var(--border-color)', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                    {record.feedback || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Pending review</span>}
                   </td>
                 </tr>
               ))}

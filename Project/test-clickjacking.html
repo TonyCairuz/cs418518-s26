@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clickjacking Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        iframe {
+            width: 800px;
+            height: 600px;
+            border: 2px solid red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Clickjacking Vulnerability Test</h1>
+    <p>If the application below loads, it is vulnerable to clickjacking. If it refuses to connect or shows a blank frame, the prevention is working.</p>
+    <!-- Attempt to embed the deployed or local site -->
+    <iframe src="http://localhost:3000"></iframe>
+</body>
+</html>

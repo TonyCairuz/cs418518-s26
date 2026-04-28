@@ -17,13 +17,15 @@ export default function Signup({ onRegister }) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
+  const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   function validate() {
     const e = {};
     if (!form.firstName.trim()) e.firstName = "First name is required";
     if (!form.lastName.trim()) e.lastName = "Last name is required";
     if (!/^\d{9}$/.test(form.uin)) e.uin = "UIN must be 9 digits";
     if (!form.email.includes("@")) e.email = "Valid email required";
-    if (form.password.length < 6) e.password = "Minimum 6 characters";
+    if (!PASSWORD_REGEX.test(form.password)) e.password = "Min 8 chars, uppercase, lowercase, number & special character";
     if (form.password !== form.confirmPassword)
       e.confirmPassword = "Passwords do not match";
     return e;
@@ -127,6 +129,9 @@ export default function Signup({ onRegister }) {
               onChange={(e) => updateField("password", e.target.value)}
               placeholder="••••••••"
             />
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
+              Min 8 chars, uppercase, lowercase, number &amp; special char
+            </span>
             {errors.password && <span className="error-text" style={{ fontSize: '12px' }}>{errors.password}</span>}
           </div>
           <div>

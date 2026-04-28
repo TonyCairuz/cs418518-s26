@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 import "./Login.css";
+
+// Google's official test site key – always passes in dev/test
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 
 export default function Login() {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,16 +37,21 @@ export default function Login() {
       return;
     }
 
+    if (!recaptchaToken) {
+      setError("Please complete the reCAPTCHA verification.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Step 1: Call existing login API (NO CHANGE to backend)
       const res = await fetch(import.meta.env.VITE_API_KEY + "user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           u_email: enteredEmail,
           u_password: enteredPassword,
+          recaptchaToken,
         }),
       });
 
@@ -52,13 +62,11 @@ export default function Login() {
         return;
       }
 
-      // Step 2: Check if token is returned (2FA disabled)
       if (json.token) {
         localStorage.setItem("loggedInUser", JSON.stringify(json.data));
         localStorage.setItem("token", json.token);
         navigate("/dashboard");
       } else {
-        // Step 3: Store email temporarily and redirect to OTP page (2FA enabled)
         localStorage.setItem("pendingOtpEmail", enteredEmail);
         navigate("/verify-otp");
       }
@@ -98,6 +106,15 @@ export default function Login() {
             className={passwordNotValid ? "invalid" : ""}
             onChange={(e) => handleInputChange("password", e.target.value)}
             placeholder="••••••••"
+          />
+        </div>
+
+        <div className="mb-4" style={{ display: 'flex', justifyContent: 'center' }}>
+          <ReCAPTCHA
+            sitekey={RECAPTCHA_SITE_KEY}
+            onChange={(token) => setRecaptchaToken(token)}
+            onExpired={() => setRecaptchaToken(null)}
+            theme="dark"
           />
         </div>
 

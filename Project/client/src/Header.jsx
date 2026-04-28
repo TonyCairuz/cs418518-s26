@@ -4,6 +4,8 @@ import './Header.css';
 export default function Header() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || 'null');
+    const isAdmin = loggedInUser?.u_is_admin === 1;
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -52,14 +54,25 @@ export default function Header() {
                                 Dashboard
                             </NavLink>
                         </li>
-                        <li>
-                            <NavLink
-                                to="/advising-history"
-                                className={({ isActive }) => isActive ? "active-link" : ""}
-                            >
-                                Course Advising
-                            </NavLink>
-                        </li>
+                        {isAdmin ? (
+                            <li>
+                                <NavLink
+                                    to="/admin"
+                                    className={({ isActive }) => isActive ? "active-link" : ""}
+                                >
+                                    Admin Portal
+                                </NavLink>
+                            </li>
+                        ) : (
+                            <li>
+                                <NavLink
+                                    to="/advising-history"
+                                    className={({ isActive }) => isActive ? "active-link" : ""}
+                                >
+                                    Course Advising
+                                </NavLink>
+                            </li>
+                        )}
                         <li>
                             <button onClick={handleLogout} className="logout-button">
                                 Logout

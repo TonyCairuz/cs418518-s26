@@ -10,6 +10,8 @@ import VerifyOtp from "./VerifyOtp.jsx";
 import Home from "./Home.jsx";
 import AdvisingHistory from "./AdvisingHistory.jsx";
 import AdvisingForm from "./AdvisingForm.jsx";
+import AdminDashboard from "./AdminDashboard.jsx";
+import AdminAdvisingView from "./AdminAdvisingView.jsx";
 
 function App() {
 
@@ -29,6 +31,8 @@ function App() {
             <Route path="/advising-history" element={<AdvisingHistory />} />
             <Route path="/advising-form" element={<AdvisingForm />} />
             <Route path="/advising-form/:id" element={<AdvisingForm />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/:id" element={<AdminAdvisingView />} />
           </Routes>
         </main>
       </Router>

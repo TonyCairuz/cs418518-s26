@@ -12,6 +12,13 @@ const myLogger = function (req, res, next) {
     next()
 }
 
+// Clickjacking prevention
+app.use((req, res, next) => {
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
+    next();
+});
+
 
 app.listen(port, () => {
     console.log(`Server is listening at port ${port}`);

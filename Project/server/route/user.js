@@ -4,6 +4,9 @@ import { sendEmail } from '../helper/sendmail.js';
 import { comparePassword, hashPassword } from "../helper/util.js";
 import jwt from 'jsonwebtoken';
 import { authenticateToken } from "../middleware/auth.js";
+import axios from 'axios';
+
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const user = Router();
 
@@ -16,6 +19,10 @@ user.post("/register", async (req, res) => {
 
         if (!u_first_name || !u_last_name || !u_email || !u_uin || !u_password) {
             return res.status(400).json({ status: 400, message: "Missing required fields" });
+        }
+
+        if (!PASSWORD_REGEX.test(u_password)) {
+            return res.status(400).json({ status: 400, message: "Password must be at least 8 characters long and include an uppercase letter, lowercase letter, number, and special character." });
         }
 
         const hashedPassword = hashPassword(u_password);
@@ -74,7 +81,20 @@ user.post("/verify-email", async (req, res) => {
 // =======================
 user.post("/login", async (req, res) => {
     try {
-        const { u_email, u_password } = req.body;
+        const { u_email, u_password, recaptchaToken } = req.body;
+
+        if (!recaptchaToken) {
+            return res.status(400).json({ status: 400, message: "reCAPTCHA verification required" });
+        }
+
+        // Verify reCAPTCHA with Google
+        const secretKey = process.env.RECAPTCHA_SECRET_KEY || '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'; // Default test secret
+        const recaptchaRes = await axios.post(
+            `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`
+        );
+        if (!recaptchaRes.data.success) {
+            return res.status(400).json({ status: 400, message: "Failed reCAPTCHA verification" });
+        }
 
         const [rows] = await connection.execute("SELECT * FROM user_info WHERE u_email = ? LIMIT 1", [u_email]);
         if (rows.length === 0 || !comparePassword(u_password, rows[0].u_password)) {
@@ -188,6 +208,11 @@ user.post("/toggle-2fa", authenticateToken, async (req, res) => {
 user.post("/change-password", authenticateToken, async (req, res) => {
     try {
         const { current_password, new_password } = req.body;
+        
+        if (!PASSWORD_REGEX.test(new_password)) {
+            return res.status(400).json({ status: 400, message: "Password must be at least 8 characters long and include an uppercase letter, lowercase letter, number, and special character." });
+        }
+
         const [rows] = await connection.execute("SELECT u_password FROM user_info WHERE u_id = ?", [req.user.id]);
         if (!comparePassword(current_password, rows[0].u_password)) return res.status(400).json({ status: 400, message: "Wrong password" });
 
@@ -220,6 +245,11 @@ user.post("/forgot-password", async (req, res) => {
 user.post("/reset-password", async (req, res) => {
     try {
         const { email, otp, new_password } = req.body;
+
+        if (!PASSWORD_REGEX.test(new_password)) {
+            return res.status(400).json({ status: 400, message: "Password must be at least 8 characters long and include an uppercase letter, lowercase letter, number, and special character." });
+        }
+
         const [rows] = await connection.execute("SELECT * FROM email_otp WHERE email=? AND otp=? AND type='reset'", [email, otp]);
         if (rows.length === 0 || new Date() > new Date(rows[0].expires_at)) return res.status(400).json({ status: 400, message: "Invalid/Expired" });
 
