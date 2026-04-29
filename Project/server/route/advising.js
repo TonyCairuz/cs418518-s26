@@ -50,16 +50,18 @@ advising.get("/record/:id", authenticateToken, async (req, res) => {
 // SUBMIT NEW ADVISING
 // =======================
 advising.post("/submit", authenticateToken, async (req, res) => {
+    const conn = await connection.getConnection();
     try {
-        await connection.beginTransaction();
+        await conn.beginTransaction();
 
         const { last_term, last_gpa, advising_term, courses } = req.body;
 
         if (!last_term || !last_gpa || !advising_term || !courses || courses.length === 0) {
+            await conn.release();
             return res.status(400).json({ status: 400, message: "Missing required fields" });
         }
 
-        const [result] = await connection.execute(
+        const [result] = await conn.execute(
             `INSERT INTO advising_records (u_id, last_term, last_gpa, advising_term, status)
             VALUES (?, ?, ?, ?, 'Pending')`,
             [req.user.id, last_term, last_gpa, advising_term]
@@ -68,17 +70,19 @@ advising.post("/submit", authenticateToken, async (req, res) => {
         const advisingId = result.insertId;
 
         for (const course of courses) {
-            await connection.execute(
+            await conn.execute(
                 "INSERT INTO advising_courses (advising_id, level, course_name) VALUES (?, ?, ?)",
                 [advisingId, course.level, course.course_name]
             );
         }
 
-        await connection.commit();
+        await conn.commit();
         res.status(201).json({ status: 201, message: "Advising record submitted successfully", id: advisingId });
     } catch (err) {
-        await connection.rollback();
+        await conn.rollback();
         res.status(500).json({ status: 500, message: err.message });
+    } finally {
+        conn.release();
     }
 });
 
@@ -86,43 +90,48 @@ advising.post("/submit", authenticateToken, async (req, res) => {
 // UPDATE ADVISING
 // =======================
 advising.put("/update/:id", authenticateToken, async (req, res) => {
+    const conn = await connection.getConnection();
     try {
         const { id } = req.params;
         const { last_term, last_gpa, advising_term, courses } = req.body;
 
-        const [records] = await connection.execute(
+        const [records] = await conn.execute(
             "SELECT status FROM advising_records WHERE id = ? AND u_id = ?",
             [id, req.user.id]
         );
 
         if (records.length === 0) {
+            await conn.release();
             return res.status(404).json({ status: 404, message: "Record not found" });
         }
 
         if (records[0].status !== 'Pending') {
+            await conn.release();
             return res.status(403).json({ status: 403, message: "Only pending records can be edited" });
         }
 
-        await connection.beginTransaction();
+        await conn.beginTransaction();
 
-        await connection.execute(
+        await conn.execute(
             "UPDATE advising_records SET last_term = ?, last_gpa = ?, advising_term = ? WHERE id = ?",
             [last_term, last_gpa, advising_term, id]
         );
 
-        await connection.execute("DELETE FROM advising_courses WHERE advising_id = ?", [id]);
+        await conn.execute("DELETE FROM advising_courses WHERE advising_id = ?", [id]);
         for (const course of courses) {
-            await connection.execute(
+            await conn.execute(
                 "INSERT INTO advising_courses (advising_id, level, course_name) VALUES (?, ?, ?)",
                 [id, course.level, course.course_name]
             );
         }
 
-        await connection.commit();
+        await conn.commit();
         res.status(200).json({ status: 200, message: "Record updated" });
     } catch (err) {
-        await connection.rollback();
+        await conn.rollback();
         res.status(500).json({ status: 500, message: err.message });
+    } finally {
+        conn.release();
     }
 });
 
