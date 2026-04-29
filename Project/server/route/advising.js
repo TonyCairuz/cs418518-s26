@@ -272,7 +272,8 @@ advising.put("/admin/:id", authenticateToken, async (req, res) => {
         // Send email notification to student (Extra Credit)
         const { u_email, u_first_name, advising_term } = recordRows[0];
         const statusColor = status === "Approved" ? "#10b981" : "#ef4444";
-        await sendEmail(
+        // Send email notification in background
+        sendEmail(
             u_email,
             `Your Course Advising for ${advising_term} has been ${status}`,
             `
