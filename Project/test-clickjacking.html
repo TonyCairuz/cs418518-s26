@@ -19,7 +19,11 @@
 <body>
     <h1>Clickjacking Vulnerability Test</h1>
     <p>If the application below loads, it is vulnerable to clickjacking. If it refuses to connect or shows a blank frame, the prevention is working.</p>
-    <!-- Attempt to embed the deployed or local site -->
-    <iframe src="http://localhost:3000"></iframe>
+    
+    <h3>Testing Local:</h3>
+    <iframe src="http://localhost:5173"></iframe>
+
+    <h3>Testing Deployed:</h3>
+    <iframe src="https://cs418-tony.web.app"></iframe>
 </body>
 </html>
