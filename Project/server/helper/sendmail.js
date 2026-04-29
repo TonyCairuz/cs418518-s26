@@ -9,31 +9,34 @@ import { createTransport } from "nodemailer";
 * @param {string} mailSubject - Subject of the email
 * @param {string} body - HTML content of the email
 */
-export function sendEmail(email, mailSubject, body) {
-    // Create a transporter object using SMTP transport
+export async function sendEmail(email, mailSubject, body) {
     const transport = createTransport({
-        host: "smtp.gmail.com",    // Gmail SMTP server
-        port: 587,                 // TLS port for Gmail
-        secure: false,             // Use TLS, not SSL
-        requireTLS: true,          // Force TLS
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        requireTLS: true,
         auth: {
-            user: process.env.SMTP_EMAIL,     // Your Gmail address (from .env)
-            pass: process.env.SMTP_PASSWORD,  // Your Gmail app password (from .env)
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD,
         },
     });
-    // Define email options
+
     const mailOptions = {
-        from: process.env.SMTP_EMAIL, // Sender address (must match authenticated user)
-        to: email,                    // Recipient email
-        subject: mailSubject,         // Email subject line
-        html: body,                   // Email body as HTML
+        from: `"Course Advising System" <${process.env.SMTP_EMAIL}>`,
+        to: email,
+        subject: mailSubject,
+        html: body,
     };
-    // Send the email
-    transport.sendMail(mailOptions, function (err, result) {
-        if (err) {
-            console.log("Error in sending email:", err.message); // Log failure
-        } else {
-            console.log("Email has been sent to " + email);    // Log success
-        }
-    });
+
+    try {
+        const info = await transport.sendMail(mailOptions);
+        console.log("Email sent successfully to " + email, info.messageId);
+        return info;
+    } catch (err) {
+        console.error("Error in sending email to " + email + ":", err.message);
+        // We don't throw here to avoid crashing the route if email fails, 
+        // but we return the error so the caller can know.
+        return { error: err.message };
+    }
 }
+

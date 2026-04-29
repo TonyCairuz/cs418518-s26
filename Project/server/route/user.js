@@ -43,7 +43,7 @@ user.post("/register", async (req, res) => {
 
         console.log(`[TESTING] VERIFICATION OTP for ${u_email}: ${otp}`);
 
-        sendEmail(u_email, "Verify your email", `<h2>Welcome!</h2><p>Your verification OTP is: <b>${otp}</b></p>`);
+        await sendEmail(u_email, "Verify your email", `<h2>Welcome!</h2><p>Your verification OTP is: <b>${otp}</b></p>`);
 
         res.status(201).json({ status: 201, message: "Registration successful. Verify your email." });
     } catch (err) {
@@ -127,7 +127,7 @@ user.post("/login", async (req, res) => {
 
         console.log(`[TESTING] LOGIN 2FA OTP for ${u_email}: ${otp}`);
 
-        sendEmail(u_email, "Your Login OTP", `<p>Your 2FA OTP is: <b>${otp}</b></p>`);
+        await sendEmail(u_email, "Your Login OTP", `<p>Your 2FA OTP is: <b>${otp}</b></p>`);
         res.status(200).json({ status: 200, message: "OTP sent", email: u_email });
     } catch (err) {
         res.status(500).json({ status: 500, message: err.message });
@@ -235,7 +235,7 @@ user.post("/forgot-password", async (req, res) => {
 
         console.log(`[TESTING] PASSWORD RESET OTP for ${email}: ${otp}`);
 
-        sendEmail(email, "Reset OTP", `OTP: ${otp}`);
+        await sendEmail(email, "Reset OTP", `OTP: ${otp}`);
         res.status(200).json({ status: 200, message: "Sent" });
     } catch (err) {
         res.status(500).json({ status: 500, message: err.message });
